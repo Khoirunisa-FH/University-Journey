@@ -1,87 +1,60 @@
 from collections import defaultdict
-import csv
 
-# Fungsi map untuk memetakan nilai dari kolom UTS dan UAS
+# Memetakan kata dengan nilai 1
+def map_function(text):
+    for word in text.split():
+        yield (word, 1)
 
-
-def map_function(file_path):
-    with open(file_path, mode='r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            for key in ['UTS', 'UAS']:
-                value = row.get(key, '').strip()
-                if value:
-                    try:
-                        yield (key, float(value))
-                    except ValueError:
-                        continue  # Abaikan nilai yang tidak bisa dikonversi ke angka
-
-# Fungsi reduce untuk menghitung rata-rata nilai per kolom
-
-
+# Menjumlahkan frekuensi kata
 def reduce_function(pairs):
-    result = defaultdict(lambda: [0, 0])  # [total, count]
-    for key, value in pairs:
-        result[key][0] += value
-        result[key][1] += 1
+    result = defaultdict(int)
+    for word, count in pairs:
+        result[word] += count
+    return result
 
-    # Menghitung rata-rata per kolom
-    average_result = {}
-    for key, (total, count) in result.items():
-        average_result[key] = total / count
-    return average_result
+# Daftar mata kuliah yang akan dihitung frekuensinya
+matkul_list = ["Kimia", "Biologi", "Fisika", "Matematika"]
 
-# Fungsi untuk menghitung frekuensi kemunculan mata kuliah tertentu
+# Daftar gender yang akan dihitung frekuensinya
+gender_list = ["Laki-laki", "Perempuan"]
 
+# Membuka dan membaca isi file CSV
+file = open("Dataset Pelatihan.csv", "r")
+isi_file = file.read()
+file.close()
 
-def map_reduce_frequency(file_path, subjects, column_name):
-    frequency_result = defaultdict(int)
-    with open(file_path, mode='r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            item = row.get(column_name, '').strip().lower()
-            if item in subjects:
-                frequency_result[item] += 1
-    return frequency_result
+# Melakukan MapReduce untuk mata kuliah
+mapped_matkul = [pair for pair in map_function(
+    isi_file) if pair[0] in matkul_list]
+reduced_matkul = reduce_function(mapped_matkul)
 
+# Melakukan MapReduce untuk gender
+mapped_gender = [pair for pair in map_function(
+    isi_file) if pair[0] in gender_list]
+reduced_gender = reduce_function(mapped_gender)
 
-# Path ke file CSV
-file_path = "Dataset Pelatihan.csv"
+# Menghitung total kemunculan untuk semua mata kuliah
+total_kemunculan_matkul = sum(reduced_matkul.values())
 
-# Melakukan map dan reduce untuk rata-rata kolom UTS dan UAS
-mapped = list(map_function(file_path))
-reduced = reduce_function(mapped)
+# Menghitung total kemunculan untuk gender
+total_kemunculan_gender = sum(reduced_gender.values())
 
-# Mencetak hasil rata-rata per kolom UTS dan UAS
-print("Rata-rata nilai per kolom:")
-for key, average in reduced.items():
-    print(f"{key}: {average:.2f}")
+# Menampilkan hasil dalam bentuk tabel untuk mata kuliah
+print(f"{'Program Studi':<20} | {'Jumlah Kemunculan':<18}")
+print('-' * 40)
 
-# Menghitung rata-rata dari dua kolom (UTS dan UAS)
-if reduced:
-    if 'UTS' in reduced and 'UAS' in reduced:
-        avg_UTS = reduced['UTS']
-        avg_UAS = reduced['UAS']
-        average_of_two = (avg_UTS + avg_UAS) / 2
-        print(
-            f"\nRata-rata keseluruhan dari UTS dan UAS: {average_of_two:.2f}")
+for matkul, count in reduced_matkul.items():
+    print(f"{matkul:<20} | {count:<18}")
 
-# Daftar mata kuliah yang ingin dihitung frekuensinya
-subjects_matkul = ['kimia', 'biologi', 'fisika', 'matematika']
-# Menghitung frekuensi kemunculan mata kuliah tertentu
-frequency_matkul = map_reduce_frequency(file_path, subjects_matkul, 'Matkul')
+print('-' * 40)
+print(f"Total Kemunculan Semua Program Studi: {total_kemunculan_matkul}")
 
-# Mencetak frekuensi kemunculan mata kuliah
-print("\nFrekuensi kemunculan mata kuliah:")
-for matkul, count in frequency_matkul.items():
-    print(f"{matkul.capitalize()}: {count}")
+# Menampilkan hasil dalam bentuk tabel untuk gender
+print(f"\n{'Gender':<20} | {'Jumlah Kemunculan':<18}")
+print('-' * 40)
 
-# Daftar gender yang ingin dihitung frekuensinya
-genders = ['laki-laki', 'perempuan']
-# Menghitung frekuensi kemunculan gender
-frequency_gender = map_reduce_frequency(file_path, genders, 'Gender')
+for gender, count in reduced_gender.items():
+    print(f"{gender:<20} | {count:<18}")
 
-# Mencetak frekuensi kemunculan gender
-print("\nFrekuensi kemunculan gender:")
-for gender, count in frequency_gender.items():
-    print(f"{gender.capitalize()}: {count}")
+print('-' * 40)
+print(f"Total Kemunculan Semua Gender: {total_kemunculan_gender}")

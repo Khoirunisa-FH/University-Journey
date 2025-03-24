@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `daftar` (
   `name` varchar(30) NOT NULL,
-  `email` varchar(20) NOT NULL,
+  `email` varchar(30) NOT NULL,
   `password` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -38,7 +38,6 @@ CREATE TABLE `daftar` (
 --
 
 INSERT INTO `daftar` (`name`, `email`, `password`) VALUES
-('Caca', 'caca08@gmail.com', 'cajj08$$'),
 ('Khoirunisa FH', 'KhoirunisaFh@gmail.c', 'BismiLLah25*!'),
 ('Nca', 'update@example.com', 'NCAtid45');
 

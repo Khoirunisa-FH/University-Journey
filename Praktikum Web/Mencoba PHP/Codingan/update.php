@@ -1,9 +1,9 @@
 <?php
-include 'config.php';
+include 'koneksi.php';
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
-$sql = "UPDATE daftar SET email='KhoirunisaFH@gmail.com' WHERE name='Khoirunisa FH'";
+$sql = "UPDATE tbl_users SET email='update@example.com' WHERE username='ncaa'";
 if ($conn->query($sql) === TRUE) {
     echo "Data berhasil diperbarui";
 } else {

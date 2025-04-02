@@ -1,9 +1,9 @@
 <?php
-include 'config.php';
+include 'koneksi.php';
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
-$sql = "DELETE FROM daftar WHERE name='Dini'";
+$sql = "DELETE FROM tbl_users WHERE fullname='Aisyah'";
 if ($conn->query($sql) === TRUE) {
     echo "Data berhasil dihapus";
 } else {
